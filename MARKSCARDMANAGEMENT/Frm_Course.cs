@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Data.SqlClient;
 using System.Configuration;
-using System.Collections;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace MARKSCARDMANAGEMENT
 {
     public partial class Frm_Course : Form
     {
-        
+        public static int flag = 0;
         private string message = string.Empty;
         string connectionString = ConfigurationManager.ConnectionStrings["ConnectionStr"].ConnectionString;
         public Frm_Course()
@@ -108,7 +101,7 @@ namespace MARKSCARDMANAGEMENT
             }
         }
 
-        private void btn_Update_Click(object sender, EventArgs e)
+        public void btn_Update_Click(object sender, EventArgs e)
         {
             if (DialogResult.Yes == MessageBox.Show("Updating will affect to all the existing related data. \n Are you sure, Do you wan't to Update?  ", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
             {
@@ -116,7 +109,6 @@ namespace MARKSCARDMANAGEMENT
                 Frm_Home.txtvalidate_Name(txtbx_coursename, err_crs_name, label_status);
                 if ((Frm_Home.var == 0) && (Frm_Home.var1 == 0))
                 {
-
                     SqlConnection con = new SqlConnection(connectionString);
                     try
                     {
@@ -130,8 +122,8 @@ namespace MARKSCARDMANAGEMENT
                         con.Open();
                         cmd.ExecuteNonQuery();
                         label_status.Text = "Course Updated Successfully.";
-                        MessageBox.Show("Operation Successful.");
-                        this.Close();
+                        MessageBox.Show("Operation Successful.");                        
+                       this.Close();                         
                     }
                     catch (Exception ex)
                     {
@@ -141,7 +133,7 @@ namespace MARKSCARDMANAGEMENT
                     {
                         con.Close();
                         ClearTextBoxes();
-                        btn_Update.Visible = false;
+                        btn_Update.Visible = false;                        
                     }
                 }
             }
@@ -167,7 +159,7 @@ namespace MARKSCARDMANAGEMENT
                 btn_Update.Visible = true;
                 btn_cancle.Visible = true;
 
-                btn_edit.Visible = false;
+                btn_edit.Visible = false;              
             }
         }
 
@@ -177,6 +169,11 @@ namespace MARKSCARDMANAGEMENT
             {
                 this.Close();
             }
+        }
+
+        private void btn_Close_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

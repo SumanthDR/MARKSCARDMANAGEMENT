@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Data.SqlClient;
 using System.Configuration;
-using System.Collections;
-using System.Drawing.Printing;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace MARKSCARDMANAGEMENT
 {
     public partial class Frm_StuView : Form
-    {
+    {       
         string connectionString = ConfigurationManager.ConnectionStrings["ConnectionStr"].ConnectionString;
         public Frm_StuView()
         {
@@ -38,7 +31,7 @@ namespace MARKSCARDMANAGEMENT
         public static string Course_Id;
         public static string ILang_Id;
         public static int flag = 0;
-
+        public int ForPrint = 0;
 
         private void Frm_StuView_Load(object sender, EventArgs e)
         {
@@ -48,7 +41,12 @@ namespace MARKSCARDMANAGEMENT
         private void btn_sort_Click(object sender, EventArgs e)
         {
             if(txtbx_year.Text.Length==4)
-            LoadDataGrid("Prc_ViewStuCrsYear", 3);
+            {
+                LoadDataGrid("Prc_ViewStuCrsYear", 3);
+
+                txtbx_regno.Text = "";
+                dateTimePicker1.Text = "";
+            }            
         }
 
         private void LoadDataGrid(string prc,int flag)
@@ -95,7 +93,7 @@ namespace MARKSCARDMANAGEMENT
                     dataGridView1.Columns[2].Name = "StuName";
                     dataGridView1.Columns[2].HeaderText = "Student Name";
                     dataGridView1.Columns[2].DataPropertyName = "StuName";
-                    dataGridView1.Columns[2].Width = 100;
+                    dataGridView1.Columns[2].Width = 160;
 
                     dataGridView1.Columns[3].Name = "DOB";
                     dataGridView1.Columns[3].HeaderText = "Date Of Birth";
@@ -105,20 +103,22 @@ namespace MARKSCARDMANAGEMENT
                     dataGridView1.Columns[4].Name = "Gender";
                     dataGridView1.Columns[4].HeaderText = "Gender";
                     dataGridView1.Columns[4].DataPropertyName = "Gender";
+                    dataGridView1.Columns[4].Width = 80;
 
                     dataGridView1.Columns[5].Name = "AadhaarNo";
                     dataGridView1.Columns[5].HeaderText = "Aadhaar No";
                     dataGridView1.Columns[5].DataPropertyName = "AadhaarNo";
-                    dataGridView1.Columns[5].Width = 165;
+                    dataGridView1.Columns[5].Width = 130;
 
                     dataGridView1.Columns[6].Name = "FName";
                     dataGridView1.Columns[6].HeaderText = "Father Name";
                     dataGridView1.Columns[6].DataPropertyName = "FName";
-                    dataGridView1.Columns[6].Width = 100;
+                    dataGridView1.Columns[6].Width = 160;
 
                     dataGridView1.Columns[7].Name = "FPhNo";
                     dataGridView1.Columns[7].HeaderText = "Phone Number";
                     dataGridView1.Columns[7].DataPropertyName = "FPhNo";
+                    dataGridView1.Columns[7].Width = 110;
 
                     dataGridView1.Columns[8].Name = "Course_Name";
                     dataGridView1.Columns[8].HeaderText = "Course";
@@ -152,7 +152,7 @@ namespace MARKSCARDMANAGEMENT
                     DataGridViewButtonColumn btn = new DataGridViewButtonColumn();
                     dataGridView1.Columns.Add(btn);
                     btn.HeaderText = "Action";
-                    btn.Text = "Edit";
+                    btn.Text = "View";
                     btn.Name = "btnGrid_Edit";
                     btn.UseColumnTextForButtonValue = true;
                     dataGridView1.DataSource = dt;
@@ -177,8 +177,11 @@ namespace MARKSCARDMANAGEMENT
         }
 
         private void btn_search_Click(object sender, EventArgs e)
-        {
+        {            
             LoadDataGrid("Prc_ViewStuRegno", 1);
+
+            cmb_coursename.Text = "";
+            txtbx_year.Text = "";
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -213,11 +216,39 @@ namespace MARKSCARDMANAGEMENT
         private void btn_search_dob_Click(object sender, EventArgs e)
         {
             LoadDataGrid("Prc_ViewStuDob", 2);
+
+            txtbx_regno.Text = "";
+            txtbx_year.Text = "";
         }
 
         private void btn_Print_Click(object sender, EventArgs e)
         {
-           
+            DGVPrinter printer = new DGVPrinter();
+            
+            //printer.Title = "Seshadripuram College Tumakuru";
+            printer.SubTitle = "Students Details";
+            printer.PageNumbers = true;
+            printer.PageNumberInHeader = false;
+            printer.PorportionalColumns = true;
+            printer.HeaderCellAlignment = StringAlignment.Near;
+            printer.FooterSpacing = 15;
+            printer.PrintDataGridView(dataGridView1);
+        }
+
+        private void btn_Close_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btn_refresh_Click(object sender, EventArgs e)
+        {
+            if (txtbx_year.Text.Length == 4)
+            {
+                LoadDataGrid("Prc_ViewStuCrsYear", 3);
+
+                txtbx_regno.Text = "";
+                dateTimePicker1.Text = "";
+            }
         }
     }
 }

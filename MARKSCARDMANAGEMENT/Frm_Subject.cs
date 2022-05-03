@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Data.SqlClient;
-using System.Configuration;
 using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace MARKSCARDMANAGEMENT
 {
@@ -24,11 +20,12 @@ namespace MARKSCARDMANAGEMENT
             InitializeComponent();
         }
 
-
+      
         // Method to insert and update subject //
 
         private void InsertUpdateSubject(string prc,int temp)
         {
+            int sum = 0;
             Frm_Home.txtvalidate_Code(txtbx_SubCode, err_SubCode, label_status);
             Frm_Home.txtvalidate_Name(txtbx_SubName, err_SubName, label_status);
             Txtvalidate_ThMaxMarks(txtbx_sub_thMax, err_SubThMax, label_status);
@@ -54,7 +51,10 @@ namespace MARKSCARDMANAGEMENT
                     cmd.Parameters.AddWithValue("@Sub_th_Min", txtbx_sub_thMin.Text);
                     cmd.Parameters.AddWithValue("@Sub_IA_Max", txtbx_sub_IAMax.Text);
                     cmd.Parameters.AddWithValue("@Sub_IA_Min", txtbx_sub_IAMin.Text);
-                    int sum = (Convert.ToInt32(txtbx_sub_IAMax.Text)) + (Convert.ToInt32(txtbx_sub_thMax.Text));
+                    if ((txtbx_sub_IAMax.Enabled == false) && (txtbx_sub_IAMin.Enabled == false))
+                        sum = (0) + (Convert.ToInt32(txtbx_sub_thMax.Text));
+                    else
+                        sum = (Convert.ToInt32(txtbx_sub_IAMax.Text)) + (Convert.ToInt32(txtbx_sub_thMax.Text));
                     cmd.Parameters.AddWithValue("@Sub_Sum_th_IA", sum.ToString());
                     cmd.Parameters.AddWithValue("@Sub_Ins_Date", dateTimePicker1.Value.Date);
                     cmd.Parameters.AddWithValue("@Course_Id", cmb_coursename.SelectedValue);
@@ -64,7 +64,7 @@ namespace MARKSCARDMANAGEMENT
                     cmd.ExecuteNonQuery();
                     message = (string)cmd.Parameters["@ERROR"].Value;
                     label_status.Text = message;
-                    MessageBox.Show(" Operation Successful.");
+                   // MessageBox.Show(" Operation Successful.");
                 }
                 catch (Exception ex)
                 {
@@ -110,6 +110,8 @@ namespace MARKSCARDMANAGEMENT
             e.Handled = true;
         }
 
+        /*
+
         //accept only alphanumeric//
         private void txtbx_SubCode_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -125,6 +127,7 @@ namespace MARKSCARDMANAGEMENT
             if (!char.IsLetter(e.KeyChar) && !char.IsControl(e.KeyChar) && !char.IsWhiteSpace(e.KeyChar))
                 e.Handled = true;
         }
+        */
 
         //============================ VALIDATION ================================================//
         private void Txtvalidate_ThMaxMarks(TextBox txtbx,ErrorProvider err,Label lbl)
@@ -181,25 +184,72 @@ namespace MARKSCARDMANAGEMENT
         private void Txtvalidate_IAMaxMarks(TextBox txtbx, ErrorProvider err, Label lbl)
         {
             int len_maxmarks = txtbx.Text.Length;
-            if (txtbx.Text == "")
+            if(chkbx_IA.Checked==true)
             {
-                err.SetError(txtbx, "Max. Marks Field is Compulsory");
-                lbl.Text = "ERROR!. -Please, Enter the Max. Marks.";
-                flag2 = 1;
-            }
-            else if ((len_maxmarks < 1) || (len_maxmarks > 3) || (txtbx.Text.Any(c => !(Char.IsNumber(c)))))
-            {
-                err.SetError(txtbx, "Invalid Marks");
-                lbl.Text = "ERROR!. -Please, Enter a valid marks.";
-                flag2 = 1;
-            }
-            else
-            {
+                txtbx_sub_IAMax.Enabled = false;
                 err.SetError(txtbx, "");
                 flag2 = 0;
             }
+            else
+            {
+                if (txtbx.Text == "")
+                {
+                    err.SetError(txtbx, "Max. Marks Field is Compulsory");
+                    lbl.Text = "ERROR!. -Please, Enter the Max. Marks.";
+                    flag2 = 1;
+                }
+                else if ((len_maxmarks < 1) || (len_maxmarks > 3) || (txtbx.Text.Any(c => !(Char.IsNumber(c)))))
+                {
+                    err.SetError(txtbx, "Invalid Marks");
+                    lbl.Text = "ERROR!. -Please, Enter a valid marks.";
+                    flag2 = 1;
+                }
+                else
+                {
+                    err.SetError(txtbx, "");
+                    flag2 = 0;
+                }
+            }           
         }
-
+        private void Txtvalidate_IAMinMarks(TextBox txtbx, ErrorProvider err, Label lbl)
+        {
+            int len_maxmarks = txtbx.Text.Length;
+            if (chkbx_IA.Checked == true)
+            {
+                txtbx_sub_IAMin.Enabled = false;
+                err.SetError(txtbx, "");
+                flag3 = 0;
+            }
+            else
+            {
+                if (txtbx.Text == "")
+                {
+                    err.SetError(txtbx, "Min. Marks Field is Compulsory");
+                    lbl.Text = "ERROR!. -Please, Enter the Min. Marks.";
+                    flag3 = 1;
+                }
+                else if ((len_maxmarks < 1) || (len_maxmarks > 3) || (txtbx.Text.Any(c => !(Char.IsNumber(c)))))
+                {
+                    err.SetError(txtbx, "Invalid Marks");
+                    lbl.Text = "ERROR!. -Please, Enter a valid marks.";
+                    flag3 = 1;
+                }
+                else
+                {
+                    if ((flag2 == 0) && ((Int32.Parse(txtbx_sub_IAMax.Text)) < (Int32.Parse(txtbx.Text))))
+                    {
+                        err.SetError(txtbx, "Min. Marks should be less than Max.Marks");
+                        lbl.Text = "ERROR!. -Min. Marks should be less than Max.Marks";
+                        flag3 = 1;
+                    }
+                    else
+                    {
+                        err.SetError(txtbx, "");
+                        flag3 = 0;
+                    }
+                }
+            }     
+        }
         private void btn_crsEdit_Click(object sender, EventArgs e)
         {
             Frm_Home.Load_SubjectCombo(cmb_coursename);
@@ -220,6 +270,47 @@ namespace MARKSCARDMANAGEMENT
             {
                 this.Close();
             }
+        }
+
+        private void chkbx_IA_CheckedChanged(object sender, EventArgs e)
+        {
+            txtbx_sub_IAMax.Text = "";
+            txtbx_sub_IAMin.Text = "";
+            txtbx_sub_IAMax.Enabled = false;
+            txtbx_sub_IAMin.Enabled = false;
+            if(chkbx_IA.Checked==false)
+            {
+                txtbx_sub_IAMax.Enabled = true;
+                txtbx_sub_IAMin.Enabled = true;
+            }
+        }
+
+        private void btn_Close_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            e.Graphics.DrawImage(bitmap, 0, 0);
+        }
+
+        Bitmap bitmap;
+        private void btn_Print_Click(object sender, EventArgs e)
+        {
+            Panel panel = new Panel();
+            this.Controls.Add(panel);
+
+            Graphics graphics = panel.CreateGraphics();
+            Size size = this.ClientSize;
+            bitmap = new Bitmap(size.Width, size.Height, graphics);
+            graphics = Graphics.FromImage(bitmap);
+
+            Point point = PointToScreen(panel.Location);
+            graphics.CopyFromScreen(point.X,point.Y,0,0,size);
+
+            printPreviewDialog1.Document = printDocument1;
+            printPreviewDialog1.ShowDialog();
         }
 
         private void btn_edit_Click(object sender, EventArgs e)
@@ -244,36 +335,6 @@ namespace MARKSCARDMANAGEMENT
             }
         }
 
-        private void Txtvalidate_IAMinMarks(TextBox txtbx, ErrorProvider err, Label lbl)
-        {
-            int len_maxmarks = txtbx.Text.Length;
-            if (txtbx.Text == "")
-            {
-                err.SetError(txtbx, "Min. Marks Field is Compulsory");
-                lbl.Text = "ERROR!. -Please, Enter the Min. Marks.";
-                flag3 = 1;
-            }
-            else if ((len_maxmarks < 1) || (len_maxmarks > 3) || (txtbx.Text.Any(c => !(Char.IsNumber(c)))))
-            {
-                err.SetError(txtbx, "Invalid Marks");
-                lbl.Text = "ERROR!. -Please, Enter a valid marks.";
-                flag3 = 1;
-            }
-            else
-            {
-                if ((flag2 == 0) && ((Int32.Parse(txtbx_sub_IAMax.Text)) < (Int32.Parse(txtbx.Text))))
-                {
-                    err.SetError(txtbx, "Min. Marks should be less than Max.Marks");
-                    lbl.Text = "ERROR!. -Min. Marks should be less than Max.Marks";
-                    flag3 = 1;
-                }
-                else
-                {
-                    err.SetError(txtbx, "");
-                    flag3 = 0;
-                }
-            }
-        }
         private void cmbcheck(ComboBox cmb,ErrorProvider err,Label lbl)
         {
             if(cmb.Text=="")

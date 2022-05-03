@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Data.SqlClient;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace MARKSCARDMANAGEMENT
 {
@@ -39,7 +33,7 @@ namespace MARKSCARDMANAGEMENT
                 cmb_Semester.Enabled = true;
                 btn_cancle.Visible = true;
                 btn_update.Visible = true;
-                btn_edit.Visible = false;
+                btn_edit.Visible = false;               
             }
         }
 
@@ -70,7 +64,12 @@ namespace MARKSCARDMANAGEMENT
                     con.Close();
                     this.Close();
                 }
+                Frm_CrsMgmt.chk = 1;
             }
+        }
+        private void btn_delete_Click(object sender, EventArgs e)
+        {
+            //string sql="delete from Tbl where "
         }
     }
 }

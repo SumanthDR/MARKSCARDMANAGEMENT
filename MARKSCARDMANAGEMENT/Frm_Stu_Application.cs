@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Data.Sql;
-using System.Data.SqlClient;
 using System.Configuration;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Drawing.Printing;
 using System.Text.RegularExpressions;
-using System.ComponentModel.Design;
-using System.Collections;
+using System.Windows.Forms;
 
 namespace MARKSCARDMANAGEMENT
 {
@@ -96,7 +89,6 @@ namespace MARKSCARDMANAGEMENT
                 cmb_coursename.Text = Frm_StuView.CourseName;
                 cmb_lang.Text = Frm_StuView.ILang;
 
-              
 
                 // Disable all feilds //
                 txtbx_regno.Enabled = false;
@@ -116,7 +108,9 @@ namespace MARKSCARDMANAGEMENT
                 btn_Edit.Visible = true;
                 btn_Update.Visible = true;
                 btn_Update.Enabled = false;
-            }
+
+                Frm_StuView.flag = 0;
+            }           
         }
 
 
@@ -360,6 +354,8 @@ namespace MARKSCARDMANAGEMENT
                 cmb_lang.Enabled = true;
                 btn_Cancle.Enabled = true;
                 btn_Update.Enabled = true;
+                btn_Print.Visible = true;
+                pictureBox1.Visible = true;
             }
         }
 
@@ -423,6 +419,71 @@ namespace MARKSCARDMANAGEMENT
             {
                 this.Close();
             }
+        }
+
+        //Bitmap bitmap;
+        private void btn_Print_Click(object sender, EventArgs e)
+        {
+            //Panel panel = new Panel();
+            //this.Controls.Add(panel);
+
+            //Graphics graphics = panel.CreateGraphics();
+            //Size size = this.ClientSize;
+            //bitmap = new Bitmap(size.Width, size.Height, graphics);
+            //graphics = Graphics.FromImage(bitmap);
+
+            //Point point = PointToScreen(panel.Location);
+            //graphics.CopyFromScreen(point.X, point.Y, 0, 0, size);
+
+            //printPreviewDialog1.Document = printDocument1;
+            //printPreviewDialog1.ShowDialog();
+
+            printDialog1.Document = printDocument1;
+            if(printDialog1.ShowDialog()==DialogResult.OK)
+            {
+                printDocument1.Print();
+            }
+        }
+
+        private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            // Print Labels
+
+            string heading = "Student Details";
+
+            e.Graphics.DrawString(heading, new Font("Arial", 25, FontStyle.Bold), Brushes.Black, 270, 30);
+            e.Graphics.DrawString(lbl_regno.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 160);
+            e.Graphics.DrawString(lbl_name.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 190);
+            e.Graphics.DrawString(lbl_dob.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 220);
+            e.Graphics.DrawString(grpbx_gender.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 250);
+            e.Graphics.DrawString(lbl_aadhaar.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 280);
+            e.Graphics.DrawString(lbl_phno.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 310);
+            e.Graphics.DrawString(lbl_email.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 340);
+            e.Graphics.DrawString(lbl_fname.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 370);            
+            e.Graphics.DrawString(lbl_f_phno.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 400);
+            e.Graphics.DrawString(lbl_f_email.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 430);
+            e.Graphics.DrawString(lbl_course.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 460);
+            e.Graphics.DrawString(lbl_lang.Text, new Font("Arial", 15, FontStyle.Bold), Brushes.Black, 50, 490);
+
+            //Print Values in Textbox
+
+            e.Graphics.DrawString(txtbx_regno.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 160);
+            e.Graphics.DrawString(txtbx_name.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 190);
+            e.Graphics.DrawString(dateTimePicker1.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 220);
+            e.Graphics.DrawString(cmb_Gender.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 250);
+            e.Graphics.DrawString(txtbx_aadhar.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 280);
+            e.Graphics.DrawString(txtbx_StuPhno.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 310);
+            e.Graphics.DrawString(txtbx_StuEmail.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 340);
+            e.Graphics.DrawString(txtbx_fname.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 370);
+            e.Graphics.DrawString(txtbx_fphno.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 400);
+            e.Graphics.DrawString(txtbx_FEmail.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 430);
+            e.Graphics.DrawString(cmb_coursename.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 460);
+            e.Graphics.DrawString(cmb_lang.Text, new Font("Arial", 15, FontStyle.Regular), Brushes.Black, 400, 490);
+        }
+
+        private void btn_Close_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void txtbx_aadhar_TextChanged(object sender, EventArgs e)
